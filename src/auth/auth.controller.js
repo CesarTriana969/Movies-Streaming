@@ -22,3 +22,5 @@ const checkUserCredentials = async(email, password) => {
 //! Las credenciales sean fallidas -> false
 
 module.exports = checkUserCredentials
+
+
