@@ -4,6 +4,7 @@ const responseHandlers = require('./utils/handleResponses')
 const db = require('./utils/database')
 const initModels = require('./models/initModels')
 const config = require('../config').api
+const upload = require('./utils/multer')
 
 const userRouter = require('./users/users.router')
 const authRouter = require('./auth/auth.router')
@@ -31,6 +32,12 @@ app.get('/', (req, res) => {
             "users": `${config.host}/api/v1/users`,
         }
     })
+})
+
+//? Ruta de ejemplo para subir imagenes
+app.post('/upload-file', upload.single('myImage'), (req, res) => {
+    const file = req.file
+    res.status(200).json({ file })
 })
 
 app.use('/api/v1/users', userRouter)

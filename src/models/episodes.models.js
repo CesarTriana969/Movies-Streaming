@@ -33,6 +33,7 @@ const Episodes = db.define("episodes", {
   episode_number: {
     type: DataTypes.SMALLINT,
     allowNull: false,
+    defaultValue: 1
   },
   duration: {
     type: DataTypes.INTEGER,

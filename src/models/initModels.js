@@ -5,8 +5,11 @@ const Movies = require("./movies.models")
 const Seasons = require("./seasons.models")
 const SerieGenres = require("./seriesGenres.models")
 const Series = require("./series.models")
+const Users = require("./users.models")
 
 const initModels = () => {
+  //?Users
+  Users
 
   //? Series -> Seasons
   Series.hasMany(Seasons);

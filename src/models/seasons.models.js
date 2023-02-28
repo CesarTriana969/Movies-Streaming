@@ -29,6 +29,7 @@ const Seasons = db.define("seasons", {
   season_numbers: {
     type: DataTypes.SMALLINT,
     allowNull: false,
+    defaultValue: 1
   },
   release_year: {
     type: DataTypes.INTEGER,
