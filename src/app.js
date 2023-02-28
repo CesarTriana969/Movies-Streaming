@@ -5,11 +5,8 @@ const db = require('./utils/database')
 const initModels = require('./models/initModels')
 const config = require('../config').api
 
-
-
 const userRouter = require('./users/users.router')
 const authRouter = require('./auth/auth.router')
-
 
 const app = express()
 
@@ -36,13 +33,10 @@ app.get('/', (req, res) => {
     })
 })
 
-
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/auth', authRouter)
 
-
-//? Esta debe ser la ultima ruta en mi app
-app.use('*', (req, res)=> {
+app.use('*', (req, res) => {
     responseHandlers.error({
         res,
         status: 404,
@@ -50,6 +44,6 @@ app.use('*', (req, res)=> {
     })
 })
 
-app.listen(config.port,() => {
+app.listen(config.port, () => {
     console.log(`Server started at port ${config.port}`)
-}) 
+})

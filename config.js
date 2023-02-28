@@ -5,17 +5,17 @@ const configs = {
         port: process.env.PORT || 3000,
         host: process.env.HOST || 'http://localhost:3000',
         nodeEnv: process.env.NODE_ENV || 'development',
-        secretOrKey: process.env.JWT_SECRET
+        secretOrKey : process.env.JWT_SECRET
     },
     db: {
         development: {
             //? Aqui deberan estar las configuraciones para la conexion con sequelize
             dialect: 'postgres',
-            host: 'localhost',
+            host: 'localhost', 
             port: 5432,
             username: 'postgres',
             password: 'root',
-            database: 'example',
+            database: 'academovies',
             define: {
                 timestamps: true, //? Nos obliga a que todas las tablas tengan la propiedad createdAt y upadtedAt
                 underscored: true,
