@@ -27,5 +27,6 @@ const createMovie = async (movieObj) => {
 
 
 module.exports = {
-  findAllMovies
+  findAllMovies,
+  createMovie
 }

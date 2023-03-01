@@ -19,5 +19,27 @@ const addToFirebaseMovieVideo = async (file) => {
 
 //? cover pelicula
 
+const addToFirebaseMovieCover = async (file) => {
+  const movieRef = ref(storage, `movieCover/${Date.now()}-${file.originalname}`)
+
+  await uploadBytes(movieRef, file.buffer)
+  const movieUrl = await getDownloadURL(movieRef)
+  return movieUrl
+}
+
+const addToFirebaseSerieSeasonCover = async (file, name, season) => {
+  const movieRef = ref(storage, `Serie/${name}/${season}/${Date.now()}-${file.originalname}`)
+
+  await uploadBytes(movieRef, file.buffer)
+  const movieUrl = await getDownloadURL(movieRef)
+  return movieUrl
+}
+
 //? Serie - Name - Temporada - Cover
 //? Serie - Name - Temporada - Capitulo
+
+
+
+module.exports = {
+  addToFirebaseMovieVideo
+}
