@@ -5,23 +5,17 @@ const db = require("../utils/database");
 const Movies = db.define("movies", {
   id: {
     type: DataTypes.UUID,
-    primaryKey: true,
+    primaryKey: true
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'title: required file'
-      },
-      len: [1, 255]
-    }
+    allowNull: false
   },
   synopsis: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: false
   },
-  release_year: {
+  releaseYear: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -31,28 +25,21 @@ const Movies = db.define("movies", {
   },
   duration: {
     type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  trillerUrl: {
+    type: DataTypes.STRING,
     allowNull: false
   },
-  trailer_url: {
+  coverUrl: {
     type: DataTypes.STRING,
-    validate: {
-      isUrl: true
-    }
+    allowNull: false
   },
-  cover_url: {
+  movieUrl: {
     type: DataTypes.STRING,
-    validate: {
-      isUrl: true
-    }
+    allowNull: false
   },
-  movie_url: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isUrl: true
-    }
-  },
-  clasification: {
+  classification: {
     type: DataTypes.STRING,
     allowNull: false
   },

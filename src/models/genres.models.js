@@ -11,12 +11,7 @@ const Genres = db.define("genres", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'name: required file'
-      },
-      len: [1, 255]
-    }
+    unique: true
   }
 });
 

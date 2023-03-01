@@ -10,66 +10,39 @@ const Users = db.define("users", {
   firstName: {
     type: DataTypes.STRING,
     allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'firstName: required file'
-      },
-      len: [1, 255]
-    }
   },
   lastName: {
     type: DataTypes.STRING,
     allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'lastName: required file'
-      },
-      len: [1, 255]
-    }
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
     validate: {
-      notEmpty: {
-        msg: 'email: required file'
-      },
-      len: [1, 255],
-      isEmail: true
+      isEmail: true,
     }
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'password: required file'
-      },
-      len: [1, 255]
-    }
+    allowNull: false
+  },
+  profileImage: {
+    type: DataTypes.STRING
   },
   gender: {
     type: DataTypes.STRING,
-    allowNull: false
   },
   birthday: {
-    type: DataTypes.DATE,
-    allowNull: false
-  },
-  profile_img: {
-    type: DataTypes.STRING,
-    validate: {
-      isUrl: true
-    }
+    type: DataTypes.DATE
   },
   role: {
     type: DataTypes.STRING,
-    allowNull: false
+    defaultValue: 'normal'
   },
-  status: {
-    type: DataTypes.STRING,
-    defaultValue: 'active'
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   }
 });
 

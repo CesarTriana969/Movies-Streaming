@@ -6,32 +6,18 @@ const Seasons = require("./seasons.models");
 const Episodes = db.define("episodes", {
   id: {
     type: DataTypes.UUID,
-    primaryKey: true,
+    primaryKey: true
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'title: required file'
-      },
-      len: [1, 255]
-    }
+    allowNull: false
   },
   synopsis: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: false
   },
-  seasonId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-    references: {
-      model: Seasons,
-      key: 'id'
-    }
-  },
-  episode_number: {
-    type: DataTypes.SMALLINT,
+  episodeNumber: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1
   },
@@ -39,17 +25,20 @@ const Episodes = db.define("episodes", {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  episode_url: {
-    type: DataTypes.STRING,
-    validate: {
-      isUrl: true
+  seasonId: {
+    type: DataTypes.UUID,
+    references: {
+      model: Seasons,
+      key: 'id'
     }
   },
-  cover_url: {
+  coverUrl: {
     type: DataTypes.STRING,
-    validate: {
-      isUrl: true
-    }
+    allowNull: false
+  },
+  episodeUrl: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
 });
 

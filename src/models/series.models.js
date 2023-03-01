@@ -5,23 +5,17 @@ const db = require("../utils/database");
 const Series = db.define("series", {
   id: {
     type: DataTypes.UUID,
-    primaryKey: true,
+    primaryKey: true
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'title: required file'
-      },
-      len: [1, 255]
-    }
+    allowNull: false
   },
   synopsis: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: false
   },
-  release_year: {
+  releaseYear: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -29,12 +23,13 @@ const Series = db.define("series", {
     type: DataTypes.STRING,
     allowNull: false
   },
-  clasification: {
+  classification: {
     type: DataTypes.STRING,
     allowNull: false
   },
   rating: {
     type: DataTypes.FLOAT,
+    defaultValue: 0.0
   }
 });
 

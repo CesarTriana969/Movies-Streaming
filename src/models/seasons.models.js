@@ -8,44 +8,37 @@ const Seasons = db.define("seasons", {
     type: DataTypes.UUID,
     primaryKey: true
   },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  synopsis: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  seasonNumber: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1
+  },
+  releaseYear: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   seriesId: {
     type: DataTypes.UUID,
-    allowNull: false,
     references: {
       model: Series,
       key: 'id'
     }
   },
-  title: {
+  coverUrl: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'title: required file'
-      },
-      len: [1, 255]
-    }
-  },
-  season_numbers: {
-    type: DataTypes.SMALLINT,
-    allowNull: false,
-    defaultValue: 1
-  },
-  release_year: {
-    type: DataTypes.INTEGER,
     allowNull: false
   },
-  cover_url: {
+  trillerUrl: {
     type: DataTypes.STRING,
-    validate: {
-      isUrl: true
-    }
-  },
-  trailer_url: {
-    type: DataTypes.STRING,
-    validate: {
-      isUrl: true
-    }
+    allowNull: false
   }
 });
 
