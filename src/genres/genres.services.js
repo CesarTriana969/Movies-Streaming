@@ -21,6 +21,7 @@ const getAllGenres = (req, res) => {
     })
 }
 
+
 const postGenre = (req, res) => {
   const { name } = req.body
   genreControllers.createGenre(name)
@@ -44,6 +45,7 @@ const postGenre = (req, res) => {
       })
     })
 }
+
 
 module.exports = {
   getAllGenres,

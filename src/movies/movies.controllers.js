@@ -18,6 +18,7 @@ const findAllMovies = async (limit, offset) => {
   return data
 }
 
+
 const createMovie = async (movieObj) => {
   const newMovie = {
     id: uuid.v4(),
@@ -36,6 +37,7 @@ const createMovie = async (movieObj) => {
   return data
 }
 
+
 const addGenreToMovie = async (dataObj) => {
   const data = await MovieGenres.create({
     id: uuid.v4(),
@@ -44,6 +46,7 @@ const addGenreToMovie = async (dataObj) => {
   })
   return data
 }
+
 
 const findAllMoviesByGenre = async (genreId) => {
   const data = await Movies.findAll({
