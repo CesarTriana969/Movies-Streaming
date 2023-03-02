@@ -7,4 +7,8 @@ router.route('/')
   .get(movieServices.getAllMovies)
   .post(upload.single('movieVideo'), movieServices.postMovie)
 
+router.get('/genres/:genreId', movieServices.getAllMoviesByGenre)
+
+router.post('/:movieId/genres/:genreId', movieServices.postGenreToMovie)
+
 module.exports = router
