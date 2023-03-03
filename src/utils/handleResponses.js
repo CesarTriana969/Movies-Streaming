@@ -10,19 +10,22 @@
 //* }
 
 //? Para respuestas exitosas
-const success = ({status, data, message, res}) => {
+const success = ({ status, data, message, res, next, prev, count }) => {
     res.status(status).json({
         error: false,
         status: status,
         message: message,
-        data: data
+        count,
+        next,
+        prev,
+        data: data,
     })
-} 
+}
 
 
 
 //? Para respuestas de errores
-const error = ({status, data, message, res, fields}) => {
+const error = ({ status, data, message, res, fields }) => {
     res.status(status).json({
         error: true,
         status: status,
@@ -63,7 +66,6 @@ const getAllProducts = (req, res) => {
             })
         })
 }
-
 const getProductById = (req, res) => {
     findProductById(id)
         .then(data => {
