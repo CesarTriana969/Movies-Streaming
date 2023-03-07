@@ -21,10 +21,11 @@ const findAllMovies = async (limit, offset, search) => {
     queryOptions.where = {
       title: {
         [Op.iLike]: `%${search}%`
-      } //Like iLike
+        //Like -> Case Sensitive -> Diferencia entre mayusculas y minusculas -> los
+        //iLike -> Not Case Sensitive -> No generea distincion entre mayusculas y minusculas
+      }
     }
   }
-
 
   const data = await Movies.findAndCountAll(queryOptions)
   return data

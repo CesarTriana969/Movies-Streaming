@@ -1,21 +1,41 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "title": "MI API de peliculas tipo neflis",
-    "version": "1.0"
-  },
-  "paths": {
-    "/api/v1/users": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Obtener todos mis usuarios"
-          },
-          "400": {
-            "description": "Ocurrió un error al intentar obtener todos los usuarios"
-          }
+    "swagger": "2.0",
+    "info": {
+        "title": "Mi API de peliculas tipo neflis",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/movies": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Obtener todos mis usuarios"
+                    },
+                    "400": {
+                        "description": "Ocurrio un error al intentar obtener todos los usuarios"
+                    }
+                }
+            }
+        },
+        "/api/v1/movies/{movieId}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "movieId",
+                        "in": "path",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Obtener todos mis usuarios"
+                    },
+                    "400": {
+                        "description": "Ocurrio un error al intentar obtener todos los usuarios"
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
