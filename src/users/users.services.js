@@ -1,32 +1,42 @@
 const usersControllers = require('./users.controllers')
 const responses = require('../utils/handleResponses')
-const {hashPassword} = require('../utils/crypto')
+const { hashPassword } = require('../utils/crypto')
 
 const getAllUsers = (req, res) => {
-    usersControllers.findAllUser()
+    const offset = Number(req.query.offset) || 0;
+    const limit = Number(req.query.limit) || 10;
+
+    usersControllers.findAllUser(limit, offset)
         .then(data => {
+            const nextPageUrl = data.count - offset > limit ? `${host}/api/v1/users?offset=${offset + limit}&limit=${limit}` : null;
+            const prevPageUrl = (offset - limit) >= 0 ? `${host}/api/v1/users?offset=${offset - limit}&limit=${limit}` : null;
+
             responses.success({
-                    status: 200,
-                    data: data,
-                    message: 'Getting all Users',
-                    res
-                })
+                status: 200,
+                count: data.count,
+                next: nextPageUrl,
+                prev: prevPageUrl,
+                data: data.rows,
+                message: 'Getting all Users',
+                res
+            })
         })
         .catch(err => {
             responses.error({
-                    status: 400,
-                    data: err,
-                    message: 'Something bad getting all users',
-                    res
-                })
+                status: 400,
+                data: err,
+                message: 'Something bad getting all users',
+                res
+            })
         })
 }
 
-const getUserById = (req ,res) => {
-    const id = req.params.id 
+
+const getUserById = (req, res) => {
+    const id = req.params.id
     usersControllers.findUserById(id)
         .then(data => {
-            if(data){
+            if (data) {
                 responses.success({
                     status: 200,
                     data,
@@ -69,27 +79,26 @@ const postNewUser = (req, res) => {
                 message: 'Error ocurred trying to create a new user',
                 res,
                 fields: {
-                    firstName : 'String',
-                    lastName : 'String',
+                    firstName: 'String',
+                    lastName: 'String',
                     email: 'example@example.com',
                     password: 'String',
-                    profileImage: 'example.com/image.png',
-                    phone : '+52 1234 123 123'
+                    profileImage: 'example.com/image.png'
                 }
             })
         })
 }
 
 const patchUser = (req, res) => {
-    const id = req.params.id 
-    const userObj = req.body 
+    const id = req.params.id
+    const userObj = req.body
 
     usersControllers.updateUser(id, userObj)
         .then(data => {
-            if(data){
+            if (data) {
                 responses.success({
                     status: 200,
-                    data, 
+                    data,
                     message: `User with id: ${id} modified successfully`,
                     res
                 })
@@ -99,12 +108,12 @@ const patchUser = (req, res) => {
                     message: `The user with ID ${id} not found`,
                     res,
                     fields: {
-                        firstName : 'String',
-                        lastName : 'String',
+                        firstName: 'String',
+                        lastName: 'String',
                         email: 'example@example.com',
                         password: 'String',
                         profileImage: 'example.com/image.png',
-                        phone : '+52 1234 123 123'
+                        phone: '+52 1234 123 123'
                     }
                 })
             }
@@ -116,26 +125,26 @@ const patchUser = (req, res) => {
                 message: `Error ocurred trying to update user with id ${id}`,
                 res,
                 fields: {
-                    firstName : 'String',
-                    lastName : 'String',
+                    firstName: 'String',
+                    lastName: 'String',
                     email: 'example@example.com',
                     password: 'String',
                     profileImage: 'example.com/image.png',
-                    phone : '+52 1234 123 123'
+                    phone: '+52 1234 123 123'
                 }
             })
         })
 }
 
 const deleteUser = (req, res) => {
-    const id = req.params.id 
+    const id = req.params.id
 
     usersControllers.deleteUser(id)
         .then(data => {
-            if(data){
+            if (data) {
                 responses.success({
                     status: 200,
-                    data, 
+                    data,
                     message: `User with id: ${id} deleted successfully`,
                     res
                 })
@@ -176,7 +185,7 @@ const getMyUser = (req, res) => {
         .catch(err => {
             responses.error({
                 res,
-                status:400,
+                status: 400,
                 message: 'Something bad getting the current user',
                 data: err
             })
@@ -191,14 +200,14 @@ const deleteMyUser = (req, res) => {
         .then(data => {
             responses.success({
                 res,
-                status:200,
+                status: 200,
                 message: `User deleted successfully with id: ${id}`
             })
         })
         .catch(err => {
             responses.error({
                 res,
-                status:400,
+                status: 400,
                 message: 'Something bad trying to delete this user'
             })
         })
@@ -207,15 +216,18 @@ const deleteMyUser = (req, res) => {
 
 const patchMyUser = (req, res) => {
 
-    const id = req.user.id //? Esto es unicamente para saber quien es el usuario
+    const id = req.user.id 
 
     const { firstName, lastName, email, password, profileImage, phone } = req.body
+
+    if (password) {
+        userObj.password = hashPassword(password);
+    }
 
     const userObj = {
         firstName,
         lastName,
         email,
-        password: hashPassword(password),
         profileImage,
         phone
     }
@@ -225,18 +237,19 @@ const patchMyUser = (req, res) => {
             responses.success({
                 res,
                 status: 200,
-                message: 'Your user has been updated succesfully!',
+                message: 'Your user has been updated successfully!',
             })
         })
         .catch(err => {
             responses.error({
                 res,
                 status: 400,
-                message: 'Something bad',
+                message: 'Something went wrong',
                 data: err
             })
         })
 }
+
 
 
 module.exports = {

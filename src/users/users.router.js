@@ -13,7 +13,7 @@ router.delete('/me', passportJwt, userServices.deleteMyUser)
 //? /api/v1/users/me
 
 router.get('/:id', userServices.getUserById)
-router.patch('/:id', userServices.patchUser)
-router.delete('/:id', userServices.deleteUser)
+//router.patch('/:id', userServices.patchUser)
+//router.delete('/:id', userServices.deleteUser)
 
 module.exports = router

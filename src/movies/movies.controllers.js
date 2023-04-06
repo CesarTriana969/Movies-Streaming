@@ -58,17 +58,22 @@ const addGenreToMovie = async (dataObj) => {
   return data
 }
 
-const findAllMoviesByGenre = async (genreId) => {
-  const data = await Movies.findAll({
+// Controlador 'findAllMoviesByGenre'
+const findAllMoviesByGenre = async (genreId, limit, offset) => {
+  const data = await Movies.findAndCountAll({
     include: {
       model: Genres,
       where: {
         id: genreId
       }
-    }
-  })
-  return data
-}
+    },
+    limit: limit,
+    offset: offset
+  });
+
+  return data;
+};
+
 
 
 module.exports = {

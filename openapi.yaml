@@ -1,0 +1,1001 @@
+openapi: 3.0.1
+
+info:
+  title: AcadeMovies API
+  description: "La API de AcadeMovies es una plataforma completa para el almacenamiento y uso de películas. Proporciona servicios relacionados con películas, incluyendo la búsqueda, obtención y creación de películas. Además, ofrece funcionalidades avanzadas como la gestión de usuarios y generos de peliculas. Con AcadeMovies API, los desarrolladores Frontend pueden crear aplicaciones de películas innovadoras y personalizadas para satisfacer las necesidades de sus usuarios. ¡Explora y aprovecha nuestra API para crear experiencias cinematográficas únicas!"
+  version: 1.0.0
+
+
+servers:
+- url: https://academlo-movies-p0t5.onrender.com/api/v1/
+tags:
+- name: Users
+- name: Auth
+- name: Movies
+- name: Genres
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Iniciar sesión de un usuario
+      description: El usuario envía su correo electrónico y contraseña para recibir un token con el cual realizará solicitudes basadas en su ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequest'
+        required: true
+      responses:
+        '200':
+          description: Credenciales correctas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+      x-codegen-request-body-name: body
+
+
+  /users/:
+    post:
+      tags:
+      - Users
+      summary: Registrar un usuario
+      description: Se registra un nuevo usuario con los campos especificados
+      requestBody:
+        description: Objeto de usuario que se debe registrar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        201:
+          description: Usuario creado exitosamente con ID ${data.id}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Error al intentar crear un nuevo usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: body
+
+    get:
+      tags:
+      - Users
+      summary: Devuelve todos los usuarios
+      description: Obtener todos los usuarios de manera paginada
+      responses:
+        200:
+          description: Respuesta exitosa con la información de los usuarios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllUsers'
+
+  /users/me:
+    get: 
+      tags: 
+      - Users
+      summary: Devuelve su propio usuario
+      description: El usuario necesita iniciar sección previamente para acceder a este recurso.
+      responses:
+        200:
+          description: Devuelve el usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSameUser'
+        401:
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseAuth'
+      security: 
+        - BearerAuth: []
+
+    patch:
+      tags:
+        - Users
+      summary: Editar usuario propio
+      description: El usuario necesita iniciar sección previamente para poder realizar cambios en su perfil.
+      requestBody:
+        description: Campos a editar en el perfil del usuario
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/editUser'
+      responses:
+        200:
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successfulResponse'
+        401:
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseAuth'
+      security:
+        - bearerAuth: [] 
+
+    delete:
+      tags:
+        - Users
+      summary: Elimina su propio usuario
+      description: El usuario necesita iniciar sección previamente para poder eliminar su perfil.
+      responses:
+        200:
+          description: Elimina el usuario exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponseDelete'
+        401:
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseAuth'
+      security:
+        - BearerAuth: []
+
+
+  /users/{id}:
+    get: 
+      tags: 
+      - Users
+      summary: Devuelve el usuario requerido por id
+      description: obtiene la informacion del usuario requerido por id
+      responses:
+        200:
+          description: Devuelve un objeto con la informacion del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserId'
+    
+
+  /movies/:
+    get:
+      tags:
+      - Movies
+      summary: Devuelve todas las peliculas
+      description: abierto
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Filtrar por título de película
+      responses:
+        200:
+          description: Devuelve peliculas de manera paginada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieListResponse'
+
+
+    post:
+      tags: 
+      - Movies
+      summary: Crea una nueva película
+      description: Permite a los usuarios crear una nueva película proporcionando los datos necesarios en un formulario.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                synopsis:
+                  type: string
+                releaseYear:
+                  type: integer
+                director:
+                  type: string
+                duration:
+                  type: integer
+                trillerUrl:
+                  type: string
+                coverUrl:
+                  type: string
+                classification:
+                  type: string
+                rating:
+                  type: integer
+                movieVideo:
+                  type: file
+      responses:
+        201:
+          description: Película creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: "Movie Created! :D"
+                  data:
+                    $ref: "#/components/schemas/Movie"
+        400:
+          description: Error en la petición
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: "Cannot read properties of undefined (reading 'originalname')"
+                  fields:
+                    $ref: "#/components/schemas/MovieFields"
+                  data:
+                    type: object
+                    example: {}
+
+
+  /movies/genres/{genreId}:
+    get:
+      tags:
+      - Movies
+      summary: Devuelve las peliculas por genero
+      description: abierto
+      parameters:
+      - in: path
+        name: genreId
+        description: ID del género de las películas a obtener
+        required: true
+        schema:
+          type: integer
+        example: 1
+      responses:
+        200:
+          description: Devuelve peliculas por genero de manera paginada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieByGenres'
+              
+
+  /movies/{movieId}/genres/{genreId}:
+    post:
+      tags: 
+      - Movies
+      summary: Añade un género a una película
+      description: Añade un género específico a una película identificada por su ID.
+      parameters:
+        - in: path
+          name: movieId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID de la película a la que se le asignará el género.
+        - in: path
+          name: genreId
+          schema:
+            type: integer
+          required: true
+          description: ID del género que se asignará a la película.
+      responses:
+        201:
+          description: Género añadido a la película exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignGenreToMovie'
+
+          
+  /genres/:
+    get:
+      tags: 
+      - Genres
+      summary: Devuelve todos los generos 
+      description: abierto
+      responses:
+        200:
+          description: Devuelve generos de manera paginada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllGenres'
+
+
+    post:
+      tags: 
+      - Genres
+      summary: añade un genero
+      description: abierto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+      responses:
+        201:
+          description: Género creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenreCreated'
+
+
+
+components:
+  schemas:
+    loginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    loginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: ¡Credenciales correctas!
+        data:
+          type: string
+          example: token
+
+    errorResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        status:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: Credenciales inválidas
+
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        profileImage:
+          type: string
+    
+    SuccessResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: "User created successfully with id: <user_id>"
+
+    data:
+      type: object
+      properties:
+        role:
+          type: string
+          example: string
+        isActive:
+          type: boolean
+          example: true
+        id:
+          type: string
+          example: string
+        firstName:
+          type: string
+          example: string
+        lastName:
+          type: string
+          example: string
+        email:
+          type: string
+          example: string
+        password:
+          type: string
+          example: string
+        profileImage:
+          type: string
+          example: string
+        updatedAt:
+          type: string
+          example: string
+        createdAt:
+          type: string
+          example: string
+        gender:
+          type: string
+          example: string
+        birthday:
+          type: string
+          example: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Error ocurred trying to create a new user
+        fields:
+          type: object
+          properties:
+            firstName:
+              type: string
+              example: String
+            lastName:
+              type: string
+              example: String
+            email:
+              type: string
+              example: example@example.com
+            password:
+              type: string
+              example: String
+            profileImage:
+              type: string
+              example: example.com/image.png
+        data:
+          type: object
+          properties: {}    
+
+    successfulResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Your user has been updated successfully!"
+
+    errorResponseAuth:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 401
+        error:
+          type: string
+          example: "Unauthorized"
+
+    editUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: String
+        lastName:
+          type: string
+          example: String
+        email:
+          type: string
+          example: example@example.com
+        password:
+          type: string
+          example: String
+        profileImage:
+          type: string
+          example: example.com/image.png
+
+
+    GetAllUsers:
+      type: object
+      properties:
+        error:
+          type: boolean
+          description: Indicador de error
+          example: false
+        status:
+          type: integer
+          description: Código de estado de la respuesta
+          example: 200
+        message:
+          type: string
+          description: Mensaje de la respuesta
+          example: "Getting all Users"
+        count:
+          type: integer
+          description: Número total de usuarios
+          example: 1
+        next:
+          type: string
+          description: URL de la siguiente página de resultados (si aplica)
+          example: null
+        prev:
+          type: string
+          description: URL de la página anterior de resultados (si aplica)
+          example: null
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserReq'
+
+
+    GetSameUser:
+      type: object
+      properties:
+        error:
+          type: boolean
+          description: Indicador de error
+          example: false
+        status:
+          type: integer
+          description: Código de estado de la respuesta
+          example: 200
+        message:
+          type: string
+          description: Mensaje de la respuesta
+          example: "This is your current user"
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserReq'
+
+    GetUserId:
+      type: object
+      properties:
+        error:
+          type: boolean
+          description: Indicador de error
+          example: false
+        status:
+          type: integer
+          description: Código de estado de la respuesta
+          example: 200
+        message:
+          type: string
+          description: Mensaje de la respuesta
+          example: "Getting User with id: string"
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserReq'
+
+
+    UserReq:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID del usuario
+          example: "string"
+        firstName:
+          type: string
+          description: Nombre del usuario
+          example: "string"
+        lastName:
+          type: string
+          description: Apellido del usuario
+          example: "String"
+        email:
+          type: string
+          description: Correo electrónico del usuario
+          example: "string"
+        password:
+          type: string
+          description: Contraseña del usuario
+          example: "string"
+        profileImage:
+          type: string
+          description: URL de la imagen de perfil del usuario
+          example: "string"
+        gender:
+          type: string
+          description: Género del usuario
+          example: null
+        birthday:
+          type: string
+          description: Fecha de nacimiento del usuario
+          example: null
+        role:
+          type: string
+          description: Rol del usuario
+          example: "string"
+        isActive:
+          type: boolean
+          description: Indicador de si el usuario está activo
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación del usuario
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de actualización del usuario
+          example: "2023-03-01T15:46:51.682Z"
+
+    SuccessResponseDelete:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "User deleted successfully with id: string"
+
+
+
+    MovieListResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Getting all the movies"
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          nullable: true
+          example: null
+        prev:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Movie'
+            
+    Movie:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "string"
+        title:
+          type: string
+          example: "string"
+        synopsis:
+          type: string
+          example: "string"
+        releaseYear:
+          type: integer
+          example: 2001
+        director:
+          type: string
+          example: "string"
+        duration:
+          type: integer
+          example: 180
+        trillerUrl:
+          type: string
+          example: "string"
+        coverUrl:
+          type: string
+          example: "string"
+        movieUrl:
+          type: string
+          format: uri
+          example: "string"
+        classification:
+          type: string
+          example: "string"
+        rating:
+          type: number
+          example: 10
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación de la película
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de actualización de la película
+          example: "2023-03-01T15:46:51.682Z"
+
+    MovieFields:
+      type: object
+      properties:
+        title:
+          type: string
+        synopsis:
+          type: string
+        releaseYear:
+          type: integer
+        director:
+          type: string
+        duration:
+          type: integer
+        trillerUrl:
+          type: string
+        coverUrl:
+          type: string
+        classification:
+          type: string
+        rating:
+          type: integer
+
+
+    MovieByGenres:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Getting all the movies"
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          nullable: true
+          example: null
+        prev:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: string
+              title:
+                type: string
+                description: Título de la película
+              synopsis:
+                type: string
+                description: Sinopsis de la película
+              releaseYear:
+                type: integer
+                example: 2010
+              director:
+                type: string
+                description: Director de la película
+              duration:
+                type: integer
+                example: 180
+              trillerUrl:
+                type: string
+                description: URL del tráiler de la película
+              coverUrl:
+                type: string
+                description: URL de la portada de la película
+              movieUrl:
+                type: string
+                description: URL de la película
+              classification:
+                type: string
+                description: Clasificación de la película
+              rating:
+                type: integer
+                example: 10
+              createdAt:
+                type: string
+                format: date-time
+                description: Fecha y hora de creación de la película
+              updatedAt:
+                type: string
+                format: date-time
+                description: Fecha y hora de actualización de la película
+              genres:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: string
+                    createdAt:
+                      type: string
+                      format: date-time
+                      description: Fecha y hora de creación del género
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      description: Fecha y hora de actualización del género
+                    movie_genres:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          string: string 
+                        movieId:
+                          type: string
+                          example: string 
+                        genreId:
+                          type: integer
+                          example: 1
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+
+    AssignGenreToMovie:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: "Genre added to movie successfully"
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: string.
+            movieId:
+              type: string
+              format: uuid
+              example: string.
+            genreId:
+              type: integer
+              example: 1.
+            updatedAt:
+              type: string
+              format: date-time
+              description: Fecha y hora de la actualización del registro.
+              example: "2023-03-01T15:46:51.682Z"
+            createdAt:
+              type: string
+              format: date-time
+              description: Fecha y hora de la creación del registro.
+              example: "2023-03-01T15:46:51.682Z"
+
+    GetAllGenres:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Getting all Genres
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          example: string
+        prev:
+          type: string
+          example: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: string
+              createdAt:
+                type: string
+                format: date-time
+                example: "2023-03-02T02:28:35.173Z"
+              updatedAt:
+                type: string
+                format: date-time
+                example: "2023-03-02T02:28:35.173Z"
+
+    GenreCreated:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: "Genre created successfully"
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 11
+            name:
+              type: string
+              example: "poesia"
+            updatedAt:
+              type: string
+              format: date-time
+              example: "2023-04-06T21:33:35.883Z"
+            createdAt:
+              type: string
+              format: date-time
+              example: "2023-04-06T21:33:35.883Z"
+      required:
+        - error
+        - status
+        - message
+        - data

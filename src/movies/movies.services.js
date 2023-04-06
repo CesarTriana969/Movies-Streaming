@@ -96,26 +96,38 @@ const postGenreToMovie = (req, res) => {
         })
 }
 
-const getAllMoviesByGenre = (req, res) => {
-    const genreId = req.params.genreId
-    movieControllers.findAllMoviesByGenre(genreId)
-        .then(data => {
-            responses.success({
-                res,
-                status: 200,
-                data,
-                message: 'Getting all the movies'
-            })
-        })
-        .catch(err => {
-            responses.error({
-                res,
-                data: err,
-                message: 'Something bad getting the movies',
-                status: 400
-            })
-        })
-}
+// Servicio 'getAllMoviesByGenre'
+const getAllMoviesByGenre = async (req, res) => {
+    try {
+        const genreId = req.params.genreId;
+        const offset = Number(req.query.offset) || 0;
+        const limit = Number(req.query.limit) || 10;
+
+        const { count, rows } = await movieControllers.findAllMoviesByGenre(genreId, limit, offset);
+
+        const nextPageUrl = count - offset > limit ? `${host}/api/v1/movies/genre/${genreId}?offset=${offset + limit}&limit=${limit}` : null;
+        const prevPageUrl = (offset - limit) >= 0 ? `${host}/api/v1/movies/genre/${genreId}?offset=${offset - limit}&limit=${limit}` : null;
+
+        responses.success({
+            res,
+            status: 200,
+            count,
+            next: nextPageUrl,
+            prev: prevPageUrl,
+            data: rows,
+            message: 'Getting all the movies'
+        });
+    } catch (err) {
+        responses.error({
+            res,
+            data: err,
+            message: 'Something went wrong while getting the movies',
+            status: 400
+        });
+    }
+};
+
+
 
 module.exports = {
     getAllMovies,

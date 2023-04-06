@@ -41,5 +41,7 @@ const addToFirebaseSerieSeasonCover = async (file, name, season) => {
 
 
 module.exports = {
-  addToFirebaseMovieVideo
+  addToFirebaseMovieVideo,
+  addToFirebaseMovieCover,
+  addToFirebaseSerieSeasonCover
 }

@@ -1,12 +1,17 @@
 const express = require('express')
 const swaggerUi = require('swagger-ui-express')
+const YAML = require('yaml');
+const fs = require('fs');
+const file = fs.readFileSync('./openapi.yaml', 'utf8')
+const swaggerDoc = YAML.parse(file)
+
 
 const responseHandlers = require('./utils/handleResponses')
 const db = require('./utils/database')
 const initModels = require('./models/initModels')
 const config = require('../config').api
 const upload = require('./utils/multer')
-const swaggerDoc = require('./swagger.json')
+
 
 const userRouter = require('./users/users.router')
 const authRouter = require('./auth/auth.router')
@@ -55,7 +60,8 @@ app.use('/api/v1/users', userRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/movies', moviesRouter)
 app.use('/api/v1/genres', genreRouter)
-app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc) )
+
 
 app.use('*', (req, res) => {
     responseHandlers.error({
