@@ -10,7 +10,7 @@ const storage = getStorage(firebaseApp)
 //? peliculas
 
 const addToFirebaseMovieVideo = async (file) => {
-  const movieRef = ref(storage, `movieVideos/${Date.now()}-${file.originalname}`)
+  const movieRef = ref(storage, `movieVideo/${Date.now()}-${file.originalname}`)
 
   await uploadBytes(movieRef, file.buffer)
   const movieUrl = await getDownloadURL(movieRef)
