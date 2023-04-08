@@ -17,6 +17,9 @@ const userRouter = require('./users/users.router')
 const authRouter = require('./auth/auth.router')
 const moviesRouter = require('./movies/movies.router')
 const genreRouter = require('./genres/genres.router')
+const seriesRouter = require('./series/series.router')
+const seasonsRouter = require('./seasons/seasons.router')
+const episodesRouter = require('./episodes/episodes.router')
 
 const app = express()
 
@@ -50,16 +53,25 @@ app.get('/query', (req, res) => {
     })
 })
 
-//? Ruta de ejemplo para subir imagenes
+//? Ruta para subir imagenes
 app.post('/upload-file', upload.fields([{ name: 'coverImage', maxCount: 1 }, { name: 'movieVideo', maxCount: 1 }]), (req, res) => {
     const file = req.files
     res.status(200).json({ file })
 })
 
+app.post('/upload-file', upload.fields([{ name: 'coverImage', maxCount: 1 }, { name: 'episodeVideo', maxCount: 1 }]), (req, res) => {
+    const file = req.files
+    res.status(200).json({ file })
+})
+
+
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/movies', moviesRouter)
 app.use('/api/v1/genres', genreRouter)
+app.use('/api/v1/series', seriesRouter)
+app.use('/api/v1/seasons', seasonsRouter)
+app.use('/api/v1/episodes', episodesRouter)
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc) )
 
 
