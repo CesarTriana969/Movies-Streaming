@@ -12,6 +12,9 @@ tags:
 - name: Users
 - name: Auth
 - name: Movies
+- name: Series
+- name: Seasons
+- name: Episodes
 - name: Genres
 
 paths:
@@ -170,6 +173,7 @@ paths:
                 $ref: '#/components/schemas/GetUserId'
     
 
+
   /movies/:
     get:
       tags:
@@ -316,7 +320,302 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssignGenreToMovie'
 
+
+
+  /series/:
+    get:
+      tags:
+      - Series
+      summary: Devuelve todas las series
+      description: abierto
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Filtrar por título de serie
+      responses:
+        200:
+          description: Devuelve las series de manera paginada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesListResponse'
+
+
+    post:
+      tags: 
+      - Series
+      summary: Crea una nueva serie
+      description: Permite a los usuarios crear una nueva serie proporcionando los datos necesarios en un formulario.
+      requestBody:
+        description: campos requeridos para crear una serie
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeriesFields'
+        required: true
+      responses:
+        201:
+          description: Serie creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: "Series Created! :D"
+                  data:
+                    $ref: "#/components/schemas/Series"
+        400:
+          description: Error en la petición
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: "notNull Violation: series.{property} cannot be null"
+                  fields:
+                    $ref: "#/components/schemas/SeriesFields"
+                  data:
+                    type: object
+                    example: {}
+
+
+  /series/genres/{genreId}:
+    get:
+      tags:
+      - Series
+      summary: Devuelve las series por genero
+      description: abierto
+      parameters:
+      - in: path
+        name: genreId
+        description: ID del género de las series a obtener
+        required: true
+        schema:
+          type: integer
+        example: 1
+      responses:
+        200:
+          description: Devuelve series por genero de manera paginada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesByGenres'
+              
+
+  /series/{seriesId}/genres/{genreId}:
+    post:
+      tags: 
+      - Series
+      summary: Añade un género a una serie
+      description: Añade un género específico a una serie identificada por su ID.
+      parameters:
+        - in: path
+          name: seriesId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID de la serie a la que se le asignará el género.
+        - in: path
+          name: genreId
+          schema:
+            type: integer
+          required: true
+          description: ID del género que se asignará a la serie.
+      responses:
+        201:
+          description: Género añadido a la serie exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignGenreToSeries'
+
+
+
+  /seasons/:
+    get:
+      tags:
+      - Seasons
+      summary: Devuelve todas las temporadas
+      description: abierto
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Filtrar por título de temporada
+      responses:
+        200:
+          description: Devuelve las temporadas de manera paginada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeasonsListResponse'
+
+
+    post:
+      tags: 
+      - Seasons
+      summary: Crea una nueva temporada
+      description: Permite a los usuarios crear una nueva temporada proporcionando los datos necesarios en un formulario.
+      requestBody:
+        description: campos requeridos para crear una temporada
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeasonsFields'
+        required: true
+      responses:
+        201:
+          description: Temporada creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: "Season Created! :D"
+                  data:
+                    $ref: "#/components/schemas/Seasons"
+        400:
+          description: Error en la petición
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: "notNull Violation: seasons.{property} cannot be null"
+                  fields:
+                    $ref: "#/components/schemas/SeasonsFields"
+                  data:
+                    type: object
+                    example: {}
+
+
+
+  /episodes/:
+    get:
+      tags:
+      - Episodes
+      summary: Devuelve todos los episodios
+      description: abierto
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Filtrar por título de episodio
+      responses:
+        200:
+          description: Devuelve los episodios de manera paginada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EpisodesListResponse'
+
+
+    post:
+      tags: 
+      - Episodes
+      summary: Crea un nuevo episodio
+      description: Permite a los usuarios crear un nuevo episodio proporcionando los datos necesarios en un formulario.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                synopsis:
+                  type: string
+                episodeNumber:
+                  type: integer
+                duration:
+                  type: integer
+                seasonId:
+                  type: string
+                coverUrl:
+                  type: string
+                episodeVideo:
+                  type: file
+      responses:
+        201:
+          description: Episodio creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: "Episode Created! :D"
+                  data:
+                    $ref: "#/components/schemas/Episodes"
+        400:
+          description: Error en la petición
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: "notNull Violation: episodes.{property} cannot be null"
+                  fields:
+                    $ref: "#/components/schemas/EpisodesFields"
+                  data:
+                    type: object
+                    example: {}
+
           
+
   /genres/:
     get:
       tags: 
@@ -887,6 +1186,7 @@ components:
                           type: string
                           format: date-time
 
+
     AssignGenreToMovie:
       type: object
       properties:
@@ -923,6 +1223,8 @@ components:
               format: date-time
               description: Fecha y hora de la creación del registro.
               example: "2023-03-01T15:46:51.682Z"
+
+
 
     GetAllGenres:
       type: object
@@ -999,3 +1301,515 @@ components:
         - status
         - message
         - data
+
+
+
+    SeriesListResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Getting all the series"
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          nullable: true
+          example: null
+        prev:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Series'
+    
+    
+    Series:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "string"
+        title:
+          type: string
+          example: "string"
+        synopsis:
+          type: string
+          example: "string"
+        releaseYear:
+          type: integer
+          example: 2019
+        director:
+          type: string
+          example: "string"
+        classification:
+          type: string
+          example: "string"
+        rating:
+          type: number
+          example: 10
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación de la serie
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de actualización de la serie
+          example: "2023-03-01T15:46:51.682Z"
+
+    SeriesFields:
+      type: object
+      properties:
+        title:
+          type: string
+        synopsis:
+          type: string
+        releaseYear:
+          type: integer
+          example: 2019
+        director:
+          type: string
+        classification:
+          type: string
+          example: 'b15'
+        rating:
+          type: integer
+          example: 10
+
+    SeriesByGenres:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Getting all the series"
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          nullable: true
+          example: null
+        prev:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SeriesConect'
+        
+
+    SeriesConect:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "string"
+        title:
+          type: string
+          example: "string"
+        synopsis:
+          type: string
+          example: "string"
+        releaseYear:
+          type: integer
+          example: 2019
+        director:
+          type: string
+          example: "string"
+        classification:
+          type: string
+          example: "string"
+        rating:
+          type: number
+          example: 10
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación de la serie
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de actualización de la serie
+          example: "2023-03-01T15:46:51.682Z"
+        genres:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: string
+              createdAt:
+                type: string
+                format: date-time
+                description: Fecha y hora de creación del género
+              updatedAt:
+                type: string
+                format: date-time
+                description: Fecha y hora de actualización del género
+              series_genres:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    string: string 
+                  genreId:
+                    type: string
+                    example: string 
+                  seriesId:
+                    type: integer
+                    example: 1
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+
+    AssignGenreToSeries:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: "Genre added to series successfully"
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: string.
+            seriesId:
+              type: string
+              format: uuid
+              example: string
+            genreId:
+              type: integer
+              example: 1
+            updatedAt:
+              type: string
+              format: date-time
+              description: Fecha y hora de la actualización del registro.
+              example: "2023-03-01T15:46:51.682Z"
+            createdAt:
+              type: string
+              format: date-time
+              description: Fecha y hora de la creación del registro.
+              example: "2023-03-01T15:46:51.682Z"
+
+    
+
+    SeasonsListResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Getting all the seasons"
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          nullable: true
+          example: null
+        prev:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Seasons'
+            
+    
+    SeasonsConect:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "string"
+        title:
+          type: string
+          example: "string"
+        synopsis:
+          type: string
+          example: "string"
+        seasonNumber:
+          type: integer
+          example: 8
+        releaseYear:
+          type: integer
+          example: 2019
+        seriesId:
+          type: string
+          example: "string"
+        coverUrl:
+          type: string
+          example: "string"
+        trillerUrl:
+          type: string
+          example: "string"
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación del registro.
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de la actualización del registro.
+          example: "2023-03-01T15:46:51.682Z"
+        series:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: string
+            title:
+              type: string
+              example: string
+
+    
+    Seasons:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "string"
+        title:
+          type: string
+          example: "string"
+        synopsis:
+          type: string
+          example: "string"
+        seasonNumber:
+          type: integer
+          example: 8
+        releaseYear:
+          type: integer
+          example: 2019
+        seriesId:
+          type: string
+          example: "string"
+        coverUrl:
+          type: string
+          example: "string"
+        trillerUrl:
+          type: string
+          example: "string"
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación del registro.
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de la actualización del registro.
+          example: "2023-03-01T15:46:51.682Z"
+
+
+    SeasonsFields:
+      type: object
+      properties:
+        title:
+          type: string
+        synopsis:
+          type: string
+        seasonNumber:
+          type: integer
+          example: 8
+        releaseYear:
+          type: integer
+          example: 2019
+        seriesId:
+          type: string
+          example: "string"
+        coverUrl:
+          type: string
+          example: "string"
+        trillerUrl:
+          type: string
+          example: "string"
+
+
+
+    EpisodesListResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Getting all the episodes"
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          nullable: true
+          example: null
+        prev:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EpisodesConect'
+            
+
+
+    EpisodesConect:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "string"
+        title:
+          type: string
+          example: "string"
+        synopsis:
+          type: string
+          example: "string"
+        episodeNumber:
+          type: integer
+          example: 1
+        duration:
+          type: integer
+          example: 38
+        seasonId:
+          type: string
+          example: "string"
+        coverUrl:
+          type: string
+          example: "string"
+        episodeUrl:
+          type: string
+          format: uri
+          example: "string"
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación de la película
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de actualización de la película
+          example: "2023-03-01T15:46:51.682Z"
+        season:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: string
+            title:
+              type: string
+              example: string
+
+      
+    Episodes:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "string"
+        title:
+          type: string
+          example: "string"
+        synopsis:
+          type: string
+          example: "string"
+        episodeNumber:
+          type: integer
+          example: 1
+        duration:
+          type: integer
+          example: 38
+        seasonId:
+          type: string
+          example: "string"
+        coverUrl:
+          type: string
+          example: "string"
+        episodeUrl:
+          type: string
+          format: uri
+          example: "string"
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación de la película
+          example: "2023-03-01T15:46:51.682Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de actualización de la película
+          example: "2023-03-01T15:46:51.682Z"
+
+    EpisodesFields:
+      type: object
+      properties:
+        title:
+          type: string
+        synopsis:
+          type: string
+        episodeNumber:
+          type: integer
+          example: 1
+        duration:
+          type: integer
+          example: 38
+        seasonId:
+          type: string
+          example: "string"
+        coverUrl:
+          type: string
+          example: "string"

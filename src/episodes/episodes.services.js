@@ -61,7 +61,6 @@ const postEpisode = async (req, res) => {
         title: 'string',
         synopsis: 'string',
         episodeNumber: 1,
-        releaseYear: 2020,
         duration: 120,
         seasonId: 'string',
         coverUrl: 'string',
